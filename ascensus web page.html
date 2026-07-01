@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ascensus | Your Fitness GPS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Roboto+Mono:wght@400;700&display=swap');
+
+        :root {
+            --bg-void: #000000;
+            --bg-surface: #0a0a0a;
+            --gold-accent: #D4AF37;
+            --gold-glow: rgba(212, 175, 55, 0.15);
+            --text-main: #FFFFFF;
+            --text-muted: #7A7A7A;
+            --border-subtle: #222222;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-void);
+            color: var(--text-main);
+            overflow-x: hidden;
+            /* Premium gradient mesh background */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+        }
+
+        /* --- TYPOGRAPHY --- */
+        .mono { font-family: 'Roboto Mono', monospace; }
+        .text-gold { color: var(--gold-accent); }
+        .text-muted { color: var(--text-muted); }
+        
+        h1 { font-size: 4rem; font-weight: 800; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 1.5rem; }
+        h2 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 1rem; }
+        p { font-size: 1.125rem; color: var(--text-muted); line-height: 1.6; }
+
+        /* --- LAYOUT & CONTAINERS --- */
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+        section { padding: 120px 0; }
+
+        /* --- SCROLL ANIMATIONS (Fade Up) --- */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+        /* --- NAVIGATION --- */
+        nav {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: fixed; width: 100%; top: 0; z-index: 100;
+        }
+        .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 800; font-size: 1.2rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold-accent); }
+
+        /* --- HERO SECTION --- */
+        .hero { min-height: 100vh; display: flex; align-items: center; text-align: center; padding-top: 80px; }
+        .hero-content { max-width: 800px; margin: 0 auto; }
+        .terminal-badge {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--gold-accent);
+            color: var(--gold-accent);
+            padding: 6px 16px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* --- BUTTONS & INPUTS --- */
+        .btn-primary {
+            background: rgba(212, 175, 55, 0.05);
+            color: var(--gold-accent);
+            border: 1px solid var(--gold-accent);
+            padding: 18px 36px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover { background: var(--gold-accent); color: var(--bg-void); box-shadow: 0 0 25px var(--gold-glow); transform: translateY(-2px); }
+
+        .waitlist-form {
+            display: flex; gap: 12px; justify-content: center; margin-top: 40px; max-width: 550px; margin-left: auto; margin-right: auto;
+        }
+        .input-field {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-subtle);
+            color: white;
+            padding: 18px 24px;
+            font-size: 1rem;
+            border-radius: 8px;
+            flex: 1;
+            outline: none;
+            transition: border 0.3s, background 0.3s;
+        }
+        .input-field:focus { border-color: var(--gold-accent); background: rgba(0,0,0,0.8); }
+
+        .fomo-text { margin-top: 15px; font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: center; align-items: center; gap: 6px; }
+        .pulse-dot { width: 8px; height: 8px; background: #34C759; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(52, 199, 89, 0); } 100% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); } }
+
+        /* --- TERMINAL DISPLAY --- */
+        .code-window {
+            background: #050505; border: 1px solid #222; border-radius: 12px;
+            padding: 30px; font-size: 0.9rem; color: #A0A0A0; margin-top: 60px;
+            text-align: left; position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .code-window::before {
+            content: 'GPS_LOGIC.exe'; position: absolute; top: -12px; left: 24px; background: #000; padding: 0 12px; font-size: 0.75rem; color: var(--gold-accent); font-family: 'Roboto Mono', monospace; border: 1px solid #222; border-radius: 4px;
+        }
+        .code-line { margin-bottom: 12px; opacity: 0; } /* Opacity 0 initially for JS animation */
+        .code-highlight { color: #34C759; }
+        .code-warning { color: #FF9F0A; }
+
+        /* Terminal typing animation class */
+        @keyframes typeLine { 0% { opacity: 0; transform: translateX(-10px); } 100% { opacity: 1; transform: translateX(0); } }
+        .animate-line { animation: typeLine 0.4s forwards; }
+
+        /* --- INTERFACE SHOWCASE (PHONE MOCKUP) --- */
+        .showcase-section {
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);
+            padding: 120px 0; overflow: hidden;
+        }
+        .showcase-container {
+            display: flex; align-items: center; justify-content: center; gap: 80px;
+            max-width: 1100px; margin: 0 auto; padding: 0 24px;
+        }
+        .phone-frame {
+            width: 340px;
+            aspect-ratio: 402 / 874;
+            height: auto;
+            border: 12px solid #141414;
+            border-radius: 45px;
+            background: var(--bg-void);
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.9), inset 0 0 0 2px #333;
+            overflow: hidden;
+            flex-shrink: 0;
+            animation: float 6s ease-in-out infinite; /* Floating effect */
+        }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
+
+        .phone-screen { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.4s ease; }
+        /* Dynamic Island / Notch */
+        .phone-frame::before {
+            content: ''; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+            width: 100px; height: 28px; background: #000; border-radius: 20px; z-index: 2;
+        }
+        
+        .showcase-controls { flex: 1; max-width: 450px; }
+        .tab-btn {
+            display: flex; align-items: center; gap: 20px; width: 100%; padding: 24px; margin-bottom: 16px;
+            background: rgba(255,255,255,0.02); border: 1px solid transparent;
+            color: var(--text-muted); border-radius: 16px;
+            cursor: pointer; transition: all 0.3s ease; text-align: left;
+        }
+        .tab-btn h4 { font-size: 1.2rem; color: var(--text-main); margin-bottom: 6px; transition: color 0.3s; }
+        .tab-btn p { font-size: 0.95rem; margin: 0; line-height: 1.5; }
+        .tab-btn:hover { background: rgba(255,255,255,0.05); }
+        
+        .tab-btn.active {
+            background: rgba(212, 175, 55, 0.05); border-color: var(--gold-accent); color: var(--gold-accent);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.05); transform: translateX(10px);
+        }
+        .tab-btn.active h4 { color: var(--gold-accent); }
+
+        /* --- FEATURES GRID --- */
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 60px; }
+        .feature-card {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 16px;
+            padding: 40px 30px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .feature-card:hover {
+            transform: translateY(-10px); border-color: var(--gold-accent); background: rgba(212, 175, 55, 0.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .feature-icon { margin-bottom: 24px; color: var(--gold-accent); width: 36px; height: 36px; }
+        .feature-card h3 { font-size: 1.4rem; margin-bottom: 16px; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 850px) {
+            h1 { font-size: 2.8rem; }
+            .waitlist-form { flex-direction: column; }
+            .btn-primary { width: 100%; }
+            .showcase-container { flex-direction: column; text-align: center; }
+            .tab-btn { text-align: center; justify-content: center; flex-direction: column; gap: 8px; transform: none !important; }
+            .phone-frame { width: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="container nav-inner">
+            <div class="logo">ASCENSUS</div>
+            <a href="#waitlist" class="mono text-muted" style="text-decoration:none; font-size:0.8rem; border:1px solid #333; padding:8px 16px; border-radius:4px; transition: color 0.3s, border-color 0.3s;">GET ACCESS</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero fade-up">
+        <div class="container hero-content">
+            <div class="terminal-badge mono">BETA V1.0 INITIALIZED</div>
+            <h1>Your Personal <span class="text-gold">Fitness GPS.</span></h1>
+            <p>Stop guessing what to do in the gym or the kitchen. Ascensus calculates your perfect route, builds your grocery list, and recalculates when you take a wrong turn.</p>
+            
+            <form class="waitlist-form" id="waitlist-form">
+                <input type="email" class="input-field mono" placeholder="Enter your email address..." required id="email-input">
+                <button type="submit" class="btn-primary">Start Your Route</button>
+            </form>
+            <div class="fomo-text mono"><div class="pulse-dot"></div> 47 spots remaining in early beta</div>
+            <div id="form-status" class="mono" style="margin-top: 20px; font-size: 0.85rem; color: #34C759; display: none;">> ROUTE SECURED. WE WILL BE IN TOUCH.</div>
+        </div>
+    </section>
+
+    <!-- THE PROBLEM / TERMINAL SHOWCASE -->
+    <section style="background: #050505; border-top: 1px solid #222;" id="terminal-section">
+        <div class="container fade-up" style="text-align: center;">
+            <h2 class="mono" style="font-size: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 3px;">The Auto-Planner</h2>
+            <h3 style="font-size: 2.8rem; margin-top: 10px;">We do the math. You follow the route.</h3>
+            
+            <div class="code-window mono" id="terminal-window">
+                <div class="code-line">> Setting destination: [Lose 5kg, Maintain Strength]...</div>
+                <div class="code-line">> Calculating daily targets...</div>
+                <div class="code-line">> <span class="code-warning">DETOUR DETECTED: Large meal logged off-plan.</span></div>
+                <div class="code-line">> Recalculating...</div>
+                <div class="code-line">> Adjusting tomorrow's macros to keep you on schedule.</div>
+                <div class="code-line">> <span class="code-highlight">NEW ROUTE GENERATED. YOU ARE STILL ON TRACK.</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- APP INTERFACE SHOWCASE -->
+    <section class="showcase-section">
+        <div class="container fade-up" style="text-align: center; margin-bottom: 60px;">
+            <h2>Inside The Dashboard</h2>
+            <p>Everything you need to reach your destination. Nothing you don't.</p>
+        </div>
+        
+        <div class="showcase-container fade-up">
+            <!-- The Floating Phone Mockup -->
+            <div class="phone-frame">
+                <!-- Replace 'fuel.png' with your actual screenshot -->
+                <img id="app-preview-image" class="phone-screen" src="fuel.png" alt="App Interface">
+            </div>
+
+            <!-- The Interactive Tabs -->
+            <div class="showcase-controls">
+                <button class="tab-btn active" onclick="changeScreenshot('fuel', this, 'fuel.png')">
+                    <div>
+                        <h4>1. Fuel (Your Daily Route)</h4>
+                        <p>A simple HUD showing exactly what to eat today to stay on track.</p>
+                    </div>
+                </button>
+
+                <button class="tab-btn" onclick="changeScreenshot('drive', this, 'drive.png')">
+                    <div>
+                        <h4>2. Drive (Your Workouts)</h4>
+                        <p>The GPS tells you exactly what exercises, sets, and weights to hit today.</p>
+                    </div>
+                </button>
+
+                <button class="tab-btn" onclick="changeScreenshot('logistics', this, 'logistics.png')">
+                    <div>
+                        <h4>3. Logistics (Grocery List)</h4>
+                        <p>An automated shopping list that matches your exact weekly targets and budget.</p>
+                    </div>
+                </button>
+
+                <button class="tab-btn" onclick="changeScreenshot('route', this, 'route.png')">
+                    <div>
+                        <h4>4. Planner (Look Ahead)</h4>
+                        <p>See the upcoming 7-day forecast so you know what's coming next.</p>
+                    </div>
+                </button>
+
+                <button class="tab-btn" onclick="changeScreenshot('progress', this, 'progress.png')">
+                    <div>
+                        <h4>5. Progress (The Map)</h4>
+                        <p>Watch your bodyweight trend perfectly toward your destination.</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section id="features">
+        <div class="container fade-up">
+            <div style="text-align: center;">
+                <h2>Smart Navigation</h2>
+                <p>Designed to keep you moving forward, even when life happens.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card fade-up">
+                    <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    <h3>Smart Progression</h3>
+                    <p>Hitting a wall in the gym? The GPS automatically adjusts your sets and weights so you never get stuck on a plateau.</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    <h3>One-Tap Recalculating</h3>
+                    <p>Ate off plan? Don't panic. Hit one button to log a detour. The app absorbs the hit and quietly adjusts the rest of your week. No guilt.</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    <h3>Fatigue Guardrails</h3>
+                    <p>The app remembers what you did yesterday. If your legs are trashed, it automatically routes you away from heavy squats to prevent burnout.</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    <h3>Automated Grocery Route</h3>
+                    <p>Tell the app your goals, and it builds a precise supermarket shopping list for the week to ensure you have the right fuel in the house.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER / FINAL CTA -->
+    <section id="waitlist" style="background: rgba(212, 175, 55, 0.02); border-top: 1px solid var(--border-subtle); text-align: center; padding: 100px 0;">
+        <div class="container fade-up">
+            <h2 class="text-gold" style="font-size: 3rem;">Stop Guessing. Start Navigating.</h2>
+            <p style="margin-bottom: 40px; font-size: 1.2rem;">Ascensus is currently in closed Beta. Enter your email to get early access.</p>
+            <button class="btn-primary" onclick="document.getElementById('email-input').focus(); window.scrollTo({top: 0, behavior: 'smooth'});" style="padding: 20px 40px; font-size: 1.1rem;">Join the Waitlist</button>
+        </div>
+    </section>
+
+    <footer style="text-align: center; padding: 40px 0; border-top: 1px solid #111; color: #444; font-size: 0.8rem;" class="mono">
+        <p>&copy; 2024 Ascensus. All systems operational.</p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script>
+        // --- 1. SCROLL REVEAL ANIMATIONS ---
+        // This makes elements slide up smoothly when you scroll down to them.
+        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // If it's the terminal, trigger the typing effect
+                    if(entry.target.id === 'terminal-section' && !window.terminalTriggered) {
+                        triggerTerminalTyping();
+                        window.terminalTriggered = true;
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+        observer.observe(document.getElementById('terminal-section')); // Observe terminal specifically
+
+        // --- 2. TERMINAL TYPING EFFECT ---
+        function triggerTerminalTyping() {
+            const lines = document.querySelectorAll('.code-line');
+            lines.forEach((line, index) => {
+                // Stagger the animation of each line by 600ms
+                setTimeout(() => {
+                    line.classList.add('animate-line');
+                }, index * 600);
+            });
+        }
+
+        // --- 3. WAITLIST FORM LOGIC ---
+        document.getElementById('waitlist-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email-input').value;
+            const status = document.getElementById('form-status');
+            const fomo = document.querySelector('.fomo-text');
+            
+            if(email) {
+                document.getElementById('email-input').value = '';
+                document.getElementById('email-input').style.display = 'none';
+                e.target.querySelector('button').style.display = 'none';
+                fomo.style.display = 'none';
+                
+                status.style.display = 'block';
+                status.innerText = "> ENCRYPTING ROUTE...";
+                
+                setTimeout(() => {
+                    status.innerText = "> SECURING CONNECTION...";
+                }, 800);
+                
+                setTimeout(() => {
+                    status.innerText = "> ROUTE SECURED. WE WILL BE IN TOUCH.";
+                }, 1800);
+            }
+        });
+
+        // --- 4. SCREENSHOT CHANGER LOGIC ---
+        function changeScreenshot(tabName, buttonElement, imageUrl) {
+            const imgElement = document.getElementById('app-preview-image');
+            
+            // Fade out
+            imgElement.style.opacity = '0.3';
+            
+            setTimeout(() => {
+                // Change image source
+                imgElement.src = imageUrl;
+                // Fade in
+                imgElement.style.opacity = '1';
+            }, 200);
+
+            // Update active states on buttons
+            const allBtns = document.querySelectorAll('.tab-btn');
+            allBtns.forEach(btn => btn.classList.remove('active'));
+            buttonElement.classList.add('active');
+        }
+    </script>
+</body>
+</html>
