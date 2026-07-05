@@ -28,7 +28,6 @@
             background-color: var(--bg-void);
             color: var(--text-main);
             overflow-x: hidden;
-            /* Premium gradient mesh background */
             background-image: 
                 radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
                 radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
@@ -47,7 +46,7 @@
         .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
         section { padding: 120px 0; }
 
-        /* --- SCROLL ANIMATIONS (Fade Up) --- */
+        /* --- SCROLL ANIMATIONS --- */
         .fade-up {
             opacity: 0;
             transform: translateY(30px);
@@ -129,15 +128,13 @@
         .code-window::before {
             content: 'GPS_LOGIC.exe'; position: absolute; top: -12px; left: 24px; background: #000; padding: 0 12px; font-size: 0.75rem; color: var(--gold-accent); font-family: 'Roboto Mono', monospace; border: 1px solid #222; border-radius: 4px;
         }
-        .code-line { margin-bottom: 12px; opacity: 0; } /* Opacity 0 initially for JS animation */
+        .code-line { margin-bottom: 12px; opacity: 0; }
         .code-highlight { color: #34C759; }
         .code-warning { color: #FF9F0A; }
-
-        /* Terminal typing animation class */
         @keyframes typeLine { 0% { opacity: 0; transform: translateX(-10px); } 100% { opacity: 1; transform: translateX(0); } }
         .animate-line { animation: typeLine 0.4s forwards; }
 
-        /* --- INTERFACE SHOWCASE (PHONE MOCKUP) --- */
+        /* --- VIDEO SHOWCASE SECTION --- */
         .showcase-section {
             background: var(--bg-surface);
             border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);
@@ -147,6 +144,7 @@
             display: flex; align-items: center; justify-content: center; gap: 80px;
             max-width: 1100px; margin: 0 auto; padding: 0 24px;
         }
+        
         .phone-frame {
             width: 340px;
             aspect-ratio: 402 / 874;
@@ -158,16 +156,58 @@
             box-shadow: 0 30px 60px rgba(0,0,0,0.9), inset 0 0 0 2px #333;
             overflow: hidden;
             flex-shrink: 0;
-            animation: float 6s ease-in-out infinite; /* Floating effect */
+            animation: float 6s ease-in-out infinite;
         }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
 
-        .phone-screen { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.4s ease; }
+        /* MAGICAL CSS FIX FOR CROPPING */
+        .phone-screen { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            object-position: center top;
+            display: block; 
+        }
+        
         /* Dynamic Island / Notch */
         .phone-frame::before {
             content: ''; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-            width: 100px; height: 28px; background: #000; border-radius: 20px; z-index: 2;
+            width: 100px; height: 28px; background: #000; border-radius: 20px; z-index: 5;
         }
+
+        /* Play Overlay */
+        .play-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 0.4s ease;
+        }
+        .play-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .play-icon {
+            width: 70px; height: 70px;
+            background: rgba(212, 175, 55, 0.2);
+            border: 2px solid var(--gold-accent);
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 16px;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        .play-overlay:hover .play-icon {
+            transform: scale(1.1);
+            background: rgba(212, 175, 55, 0.4);
+        }
+        .play-icon svg { width: 30px; height: 30px; fill: var(--gold-accent); margin-left: 4px; }
         
         .showcase-controls { flex: 1; max-width: 450px; }
         .tab-btn {
@@ -185,6 +225,7 @@
             box-shadow: 0 10px 30px rgba(212, 175, 55, 0.05); transform: translateX(10px);
         }
         .tab-btn.active h4 { color: var(--gold-accent); }
+        .timestamp { font-size: 0.8rem; padding: 4px 8px; background: rgba(0,0,0,0.5); border: 1px solid #333; border-radius: 4px; float: right; margin-top: 4px; color: #A0A0A0; }
 
         /* --- FEATURES GRID --- */
         .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 60px; }
@@ -205,7 +246,7 @@
             .waitlist-form { flex-direction: column; }
             .btn-primary { width: 100%; }
             .showcase-container { flex-direction: column; text-align: center; }
-            .tab-btn { text-align: center; justify-content: center; flex-direction: column; gap: 8px; transform: none !important; }
+            .tab-btn { text-align: left; transform: none !important; }
             .phone-frame { width: 300px; }
         }
     </style>
@@ -253,54 +294,71 @@
         </div>
     </section>
 
-    <!-- APP INTERFACE SHOWCASE -->
+    <!-- APP INTERFACE SHOWCASE (VIDEO) -->
     <section class="showcase-section">
         <div class="container fade-up" style="text-align: center; margin-bottom: 60px;">
             <h2>Inside The Dashboard</h2>
-            <p>Everything you need to reach your destination. Nothing you don't.</p>
+            <p>Take a sneak peek at the beta. Click to play the guided walkthrough.</p>
         </div>
         
         <div class="showcase-container fade-up">
-            <!-- The Floating Phone Mockup -->
+            <!-- The Floating Phone Mockup with Video -->
             <div class="phone-frame">
-                <!-- Replace 'fuel.png' with your actual screenshot -->
-                <img id="app-preview-image" class="phone-screen" src="fuel.png" alt="App Interface">
+                <!-- Play Overlay -->
+                <div id="video-overlay" class="play-overlay">
+                    <div class="play-icon">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                    <p class="mono text-gold" style="font-size: 0.8rem; letter-spacing: 1px; font-weight: bold;">PLAY SNEAK PEEK</p>
+                </div>
+
+                <!-- App Video Recording (Audio track is baked inside this .mp4) -->
+                <video id="app-video" class="phone-screen" playsinline poster="fuel-poster.png">
+                    <source src="ascensus-demo.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
             </div>
 
-            <!-- The Interactive Tabs -->
+            <!-- The Interactive Chapter Tabs -->
             <div class="showcase-controls">
-                <button class="tab-btn active" onclick="changeScreenshot('fuel', this, 'fuel.png')">
-                    <div>
-                        <h4>1. Fuel (Your Daily Route)</h4>
-                        <p>A simple HUD showing exactly what to eat today to stay on track.</p>
+                <!-- UPDATE THESE NUMBERS TO MATCH YOUR DA VINCI TIMELINE! -->
+                <button class="tab-btn active" onclick="skipToChapter(0, this)">
+                    <div style="width: 100%;">
+                        <span class="timestamp mono">0:00</span>
+                        <h4>1. The Meal Plan</h4>
+                        <p>A simple dashboard showing your exact route, macros, and budget.</p>
                     </div>
                 </button>
 
-                <button class="tab-btn" onclick="changeScreenshot('drive', this, 'drive.png')">
-                    <div>
-                        <h4>2. Drive (Your Workouts)</h4>
-                        <p>The GPS tells you exactly what exercises, sets, and weights to hit today.</p>
+                <button class="tab-btn" onclick="skipToChapter(18, this)">
+                    <div style="width: 100%;">
+                        <span class="timestamp mono">0:18</span>
+                        <h4>2. The Detour</h4>
+                        <p>Log off-plan meals, and the algorithm instantly recalibrates your week.</p>
                     </div>
                 </button>
 
-                <button class="tab-btn" onclick="changeScreenshot('logistics', this, 'logistics.png')">
-                    <div>
-                        <h4>3. Logistics (Grocery List)</h4>
-                        <p>An automated shopping list that matches your exact weekly targets and budget.</p>
+                <button class="tab-btn" onclick="skipToChapter(40, this)">
+                    <div style="width: 100%;">
+                        <span class="timestamp mono">0:40</span>
+                        <h4>3. The Gym & Recovery</h4>
+                        <p>Workouts that automatically adjust weights and route around muscle fatigue.</p>
                     </div>
                 </button>
 
-                <button class="tab-btn" onclick="changeScreenshot('route', this, 'route.png')">
-                    <div>
-                        <h4>4. Planner (Look Ahead)</h4>
-                        <p>See the upcoming 7-day forecast so you know what's coming next.</p>
+                <button class="tab-btn" onclick="skipToChapter(60, this)">
+                    <div style="width: 100%;">
+                        <span class="timestamp mono">1:00</span>
+                        <h4>4. The Shopping List</h4>
+                        <p>An automated grocery list that perfectly matches your targets and budget.</p>
                     </div>
                 </button>
 
-                <button class="tab-btn" onclick="changeScreenshot('progress', this, 'progress.png')">
-                    <div>
-                        <h4>5. Progress (The Map)</h4>
-                        <p>Watch your bodyweight trend perfectly toward your destination.</p>
+                <button class="tab-btn" onclick="skipToChapter(75, this)">
+                    <div style="width: 100%;">
+                        <span class="timestamp mono">1:15</span>
+                        <h4>5. The Destination</h4>
+                        <p>Watch your bodyweight trend perfectly to your goal on the calendar.</p>
                     </div>
                 </button>
             </div>
@@ -356,13 +414,11 @@
     <!-- SCRIPTS -->
     <script>
         // --- 1. SCROLL REVEAL ANIMATIONS ---
-        // This makes elements slide up smoothly when you scroll down to them.
         const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
         const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
-                    // If it's the terminal, trigger the typing effect
                     if(entry.target.id === 'terminal-section' && !window.terminalTriggered) {
                         triggerTerminalTyping();
                         window.terminalTriggered = true;
@@ -372,13 +428,12 @@
         }, observerOptions);
 
         document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-        observer.observe(document.getElementById('terminal-section')); // Observe terminal specifically
+        observer.observe(document.getElementById('terminal-section')); 
 
         // --- 2. TERMINAL TYPING EFFECT ---
         function triggerTerminalTyping() {
             const lines = document.querySelectorAll('.code-line');
             lines.forEach((line, index) => {
-                // Stagger the animation of each line by 600ms
                 setTimeout(() => {
                     line.classList.add('animate-line');
                 }, index * 600);
@@ -401,35 +456,48 @@
                 status.style.display = 'block';
                 status.innerText = "> ENCRYPTING ROUTE...";
                 
-                setTimeout(() => {
-                    status.innerText = "> SECURING CONNECTION...";
-                }, 800);
-                
-                setTimeout(() => {
-                    status.innerText = "> ROUTE SECURED. WE WILL BE IN TOUCH.";
-                }, 1800);
+                setTimeout(() => { status.innerText = "> SECURING CONNECTION..."; }, 800);
+                setTimeout(() => { status.innerText = "> ROUTE SECURED. WE WILL BE IN TOUCH."; }, 1800);
             }
         });
 
-        // --- 4. SCREENSHOT CHANGER LOGIC ---
-        function changeScreenshot(tabName, buttonElement, imageUrl) {
-            const imgElement = document.getElementById('app-preview-image');
-            
-            // Fade out
-            imgElement.style.opacity = '0.3';
-            
-            setTimeout(() => {
-                // Change image source
-                imgElement.src = imageUrl;
-                // Fade in
-                imgElement.style.opacity = '1';
-            }, 200);
+        // --- 4. VIDEO LOGIC ---
+        const video = document.getElementById('app-video');
+        const overlay = document.getElementById('video-overlay');
+        let isPlaying = false;
 
-            // Update active states on buttons
+        // Play when the overlay is clicked
+        overlay.addEventListener('click', () => {
+            playMedia();
+        });
+
+        function playMedia() {
+            if(!isPlaying) {
+                video.play();
+                overlay.classList.add('hidden'); // Hide play button
+                isPlaying = true;
+            }
+        }
+
+        // Skip to chapters via side tabs
+        function skipToChapter(timeInSeconds, buttonElement) {
+            video.currentTime = timeInSeconds;
+            
+            if(!isPlaying) {
+                playMedia();
+            }
+
+            // Update UI Active states
             const allBtns = document.querySelectorAll('.tab-btn');
             allBtns.forEach(btn => btn.classList.remove('active'));
             buttonElement.classList.add('active');
         }
+
+        // Show overlay again if video ends
+        video.addEventListener('ended', () => {
+            isPlaying = false;
+            overlay.classList.remove('hidden');
+        });
     </script>
 </body>
 </html>
